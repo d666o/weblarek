@@ -2,7 +2,7 @@ import { IProduct } from "../../types";
 
 export class Products {
     protected list: IProduct[] = [];
-    protected checkedItem: IProduct = <IProduct>{};
+    protected checkedItem: IProduct | null = null;
 
     setList(items: IProduct[]): void {
         this.list = items;
@@ -10,13 +10,14 @@ export class Products {
     getList(): IProduct[] {
         return this.list;
     };
-    getListItem(id: string): IProduct | undefined {
-        return this.list.find(item => item.id === id);
+    getListItem(id: string): IProduct | null {
+        const item = this.list.find(item => item.id === id);
+        return item ? item : null;
     };
-    setCheckedItem(item: IProduct | undefined): void {
-        item && (this.checkedItem = item);
+    setCheckedItem(item: IProduct | null): void {
+        this.checkedItem = item;
     };
-    getCheckedItem(): IProduct {
+    getCheckedItem(): IProduct | null {
         return this.checkedItem;
     };
 };

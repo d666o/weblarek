@@ -14,19 +14,16 @@ export interface IProduct {
     description: string
 }
 
+type TPayment = 'online' | 'cash'
+
 export interface IBuyer {
-    payment: 'online' | 'cash' | 'Не выбран вид оплаты',
+    payment: TPayment | null,
     email: string,
     phone: string,
     address: string
 }
 
-export interface IValidate {
-    payment?: string,
-    address?: string,
-    email?: string,
-    phone?: string
-}
+export type TBuyerErrors = Partial<Record<keyof IBuyer, string>>
 
 export interface IResponseApi {
     total: number
@@ -41,7 +38,4 @@ export interface IOrder extends IBuyer {
 export interface IResolveOrder {
     id: string,
     total: number
-}
-export interface IRejectOrder {
-    error: string
 }

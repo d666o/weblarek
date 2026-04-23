@@ -1,31 +1,28 @@
-import { IBuyer, IValidate } from "../../types";
+import { IBuyer, TBuyerErrors } from "../../types";
 
 export class Buyer {
     protected info: IBuyer = {
-        payment: 'Не выбран вид оплаты',
-        address: 'Необходимо указать адрес',
-        email: 'Необходимо указать Email',
-        phone: 'Необходимо указать телефон'
+        payment: null,
+        address: '',
+        email: '',
+        phone: ''
     };
 
-    setInfo(item: IBuyer): void {
-        this.info.payment = item.payment
-        this.info.address = item.address
-        this.info.email = item.email
-        this.info.phone = item.phone
+    setInfo(item: Partial<IBuyer>): void {
+        this.info = { ...this.info, ...item };
     };
     getInfo(): IBuyer {
         return this.info;
     };
     clearInfo(): void {
-        this.info = <IBuyer>{};
+        this.info = { payment: null, address: '', email: '', phone: '' };
     };
-    validateInfo(): IValidate | true {
-        const validate: IValidate = {};
-        this.info.payment === 'Не выбран вид оплаты' && (validate['payment'] = this.info.payment);
-        this.info.address === 'Необходимо указать адрес' && (validate['address'] = this.info.address);
-        this.info.email === 'Необходимо указать Email' && (validate['email'] = this.info.email);
-        this.info.phone === 'Необходимо указать телефон' && (validate['phone'] = this.info.phone);
-        return Object.keys(validate).length === 0 ? true : validate;
+    validateInfo(): TBuyerErrors {
+        const errors: TBuyerErrors = {};
+        this.info.payment === null && (errors.payment = 'Не выбран вид оплаты');
+        !this.info.address.trim() && (errors.address = 'Необходимо указать адрес');
+        !this.info.email.trim() && (errors.email = 'Необходимо указать Email');
+        !this.info.phone.trim() && (errors.phone = 'Необходимо указать телефон');
+        return errors;
     };
 };

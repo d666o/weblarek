@@ -1,5 +1,5 @@
 import { Api } from './components/base/Api';
-import { ApiCommunication } from './components/base/ApiCommunication';
+import { ApiCommunication } from './components/ApiCommunication';
 import { Buyer } from './components/Models/Buyer';
 import { Cart } from './components/Models/Cart';
 import { Products } from './components/Models/Product';
@@ -10,7 +10,7 @@ import { apiProducts } from './utils/data';
 
 // Products test
 const productsModel = new Products();
-const id = "854cef69-976d-4c2a-a18c-2aa45046c390";
+const id = "854cef69-976d-4c2a-a18c-2aa45046c390!";
 console.log('class Products tests: ');
 productsModel.setList(apiProducts.items);
 console.log('Массив товаров из каталога: ', productsModel.getList());
@@ -24,7 +24,7 @@ const cartModel = new Cart();
 console.log('class Cart tests: ');
 cartModel.addItem(productsModel.getCheckedItem());
 console.log('Массив товаров в корзине: ', cartModel.getList());
-cartModel.removeItem(productsModel.getCheckedItem());
+cartModel.removeItem(id);
 cartModel.clearList();
 console.log('Общая стоимость товаров в корзине: ', cartModel.getTotalAmount());
 console.log('Количество товаров в корзине', cartModel.getItemsCount());
@@ -40,6 +40,7 @@ const info: IBuyer = {
     phone: '+7 (900) 554-44-00'
 };
 console.log('class Buyer tests: ');
+console.log('Валидация некорректных данных, введенных покупателем: ', buyerModel.validateInfo())
 buyerModel.setInfo(info);
 console.log('Сохраненные данные покупателя: ', buyerModel.getInfo());
 console.log('Валидация введенных покупателем данных: ', buyerModel.validateInfo());
@@ -47,6 +48,13 @@ buyerModel.clearInfo();
 console.log('---');
 
 // ApiCommunication test
-const test = await new ApiCommunication(new Api(API_URL)).getProductList();
-productsModel.setList(test.items);
-console.log('Массив товаров из каталога, полученный через api:', productsModel.getList());
+const test = async () => {
+    try {
+        const res = await new ApiCommunication(new Api(API_URL)).getProductList()
+        productsModel.setList(res.items)
+        console.log('Массив товаров из каталога, полученный через api: ', productsModel.getList())
+    } catch (e: any) {
+        console.log(e)
+    }
+}
+test()
