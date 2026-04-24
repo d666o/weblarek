@@ -11,12 +11,15 @@ export class Buyer {
     setInfo(item: Partial<IBuyer>): void {
         this.info = { ...this.info, ...item };
     };
+    
     getInfo(): IBuyer {
         return this.info;
     };
+    
     clearInfo(): void {
         this.info = { payment: null, address: '', email: '', phone: '' };
     };
+    
     validateInfo(): TBuyerErrors {
         const errors: TBuyerErrors = {};
         this.info.payment === null && (errors.payment = 'Не выбран вид оплаты');

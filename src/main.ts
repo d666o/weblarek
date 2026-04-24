@@ -48,13 +48,15 @@ buyerModel.clearInfo();
 console.log('---');
 
 // ApiCommunication test
+const api = new Api(API_URL);
+const apiService = new ApiCommunication(api);
 const test = async () => {
     try {
-        const res = await new ApiCommunication(new Api(API_URL)).getProductList()
-        productsModel.setList(res.items)
-        console.log('Массив товаров из каталога, полученный через api: ', productsModel.getList())
+        const res = await apiService.getProductList();
+        productsModel.setList(res.items);
+        console.log('Массив товаров из каталога, полученный через api: ', productsModel.getList());
     } catch (e: any) {
-        console.log(e)
-    }
-}
-test()
+        console.log(e);
+    };
+};
+test();
