@@ -356,7 +356,7 @@ Presenter - презентер содержит основную логику п
 Дочерний класс Card, отвечает за отображение выбранной карточки в модальном окне.
 
 Интерфейс:
-`ICardPreview extends ICard {category: string, image: string, description: string}`
+`ICardPreview extends ICard {category: string, image: string, description: string, buttonEnabled: number | null, buttonText: string}`
 `ICardPreviewActions {buttonHandler: () => void}`
 
 Конструктор:
@@ -372,7 +372,8 @@ Presenter - презентер содержит основную логику п
 `set category(value: string)` - устанавливает категорию товара.
 `set image(value: string)` - устанавливает картинку товара.
 `set description(value: string)` - устанавливает описание товара.
-`setButton(value: string, disabled: boolean, onClick?: () => void): void` - устанавливает кнопку карточки товара.
+`set buttonEnabled(value: number | null)` - устанавливает доступность кнопки карточки товара.
+`set buttonText(value: string)` - устанавливает текст кнопки карточки товара.
 
 ##### Класс CardBasket
 Дочерний класс Card, отвечает за отображение добавленных товаров в корзину.
@@ -404,6 +405,7 @@ Presenter - презентер содержит основную логику п
 `order:close` - закрывает модальное окно успешной покупки.
 `card:select` - устанавливает выбранный в каталоге товар.
 `products:change` - обновляет карточки в каталоге при изменении в моделе.
+`cardPreview:action` - устанавливает обработчик клика на кнопку на карточке товара, выбранную для подробного просмотра.
 `checkedProduct:change` - открывает модальное окно с подробным просмотром товара.
 `cart:change` - обновляет счетчик товаров на кнопке корзины.
 `buyer:change` - проводит валидацию введенных в формы данных, выводит ошибки заполнения.

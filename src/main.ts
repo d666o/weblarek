@@ -30,6 +30,7 @@ const wrapper = ensureElement<HTMLElement>('.page__wrapper');
 const header = new Header(events, wrapper);
 const gallery = new Gallery(wrapper);
 const modal = new Modal(events, ensureElement('#modal-container'));
+const cardPreview = new CardPreview(cloneTemplate('#card-preview'), {buttonHandler: () => events.emit('cardPreview:action')});
 const basket = new Basket(events, cloneTemplate('#basket'));
 const orderForm = new OrderForm(events, cloneTemplate('#order'));
 const contactsForm = new ContactsForm(events, cloneTemplate(('#contacts')));
@@ -44,13 +45,7 @@ events.on('basket:add', (product: IProduct) => {
     modal.cl();
 });
 events.on('basket:open', () => {
-    const cartList = cart.getList();
-    const cards = cartList.map((product, index) => {
-        const cardBasket = new CardBasket(cloneTemplate('#card-basket'), {removeItem: () => events.emit('basket:remove', product)});
-        cardBasket.index = index + 1;
-        return cardBasket.render(product);
-    });
-    modal.content = basket.render({items: cards, price: cart.getTotalAmount(), buttonEnabled: cartList.length > 0});
+    modal.content = basket.render();
     modal.op();
 });
 events.on('basket:order', () => {
@@ -94,25 +89,30 @@ events.on('card:select', (product: IProduct) => {
 events.on('products:change', () => {
     gallery.catalog = products.getList().map(item => new CardGallery(cloneTemplate('#card-catalog'), {selectCardHandler: () => events.emit('card:select', item)}).render(item));
 });
+events.on('cardPreview:action', () => {
+    const checkedProduct = products.getCheckedItem();
+    if (checkedProduct) {
+        cart.isExist(checkedProduct.id) ? cart.removeItem(checkedProduct.id) : cart.addItem(checkedProduct);
+        modal.cl();
+    };
+});
 events.on('checkedProduct:change', (data: {item: IProduct}) => {
     const product = data.item;
-    let cardPreview;
-    if (product.price === null) {
-        cardPreview = new CardPreview(cloneTemplate('#card-preview'));
-        cardPreview.setButton('Недоступно');
-    } else {
-        if (cart.isExist(product.id)) {
-            cardPreview = new CardPreview(cloneTemplate('#card-preview'), {buttonHandler: () => events.emit('basket:remove', product)});
-            cardPreview.setButton('Удалить из корзины');
-        } else {
-            cardPreview = new CardPreview(cloneTemplate('#card-preview'), {buttonHandler: () => events.emit('basket:add', product)});
-            cardPreview.setButton('Купить');
-        };
-    };
-    modal.content = cardPreview.render(product);
+    let text = '';
+    if (cart.isExist(product.id)) text = 'Удалить из корзины'
+    else text = 'Купить';
+    if (product.price === null) text = 'Недоступно';
+    modal.content = cardPreview.render({...product, buttonEnabled: product.price, buttonText: text});
     modal.op();
 });
 events.on('cart:change', () => {
+    const cartList = cart.getList();
+    const cards = cartList.map((product, index) => {
+        const cardBasket = new CardBasket(cloneTemplate('#card-basket'), {removeItem: () => events.emit('basket:remove', product)});
+        cardBasket.index = index + 1;
+        return cardBasket.render(product);
+    });
+    basket.render({items: cards, price: cart.getTotalAmount(), buttonEnabled: cartList.length > 0});
     header.counter = cart.getItemsCount();
 });
 events.on('buyer:change', () => {

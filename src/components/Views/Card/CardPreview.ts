@@ -5,7 +5,9 @@ import { Card, ICard } from "./Card";
 interface ICardPreview extends ICard {
     category: string,
     image: string,
-    description: string
+    description: string,
+    buttonEnabled: number | null,
+    buttonText: string
 };
 interface ICardPreviewActions {
     buttonHandler: () => void
@@ -23,7 +25,10 @@ export class CardPreview extends Card<ICardPreview> {
         this.imageElement = ensureElement<HTMLImageElement>('.card__image', this.container);
         this.textElement = ensureElement<HTMLElement>('.card__text', this.container);
         this.buttonElement = ensureElement<HTMLButtonElement>('.card__button', this.container);
-        if (actions?.buttonHandler) this.buttonElement.addEventListener('click', actions.buttonHandler);
+        if (actions?.buttonHandler) {
+            container.removeEventListener('click', actions.buttonHandler);
+            this.buttonElement.addEventListener('click', actions.buttonHandler);
+        };
     };
 
     set category(value: string) {
@@ -41,10 +46,15 @@ export class CardPreview extends Card<ICardPreview> {
         this.textElement.textContent = value;
     };
 
-    setButton(value: string): void {
-        this.buttonElement.textContent = value;
-        if (value !== 'Недоступно') {
+    set buttonEnabled(value: number | null) {
+        if (value === null) {
+            this.buttonElement.disabled = true;
+        } else {
             this.buttonElement.disabled = false;
-        } else this.buttonElement.disabled = true;
+        }
+    };
+
+    set buttonText(value: string) {
+        this.buttonElement.textContent = value;
     };
 };
