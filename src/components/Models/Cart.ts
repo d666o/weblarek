@@ -1,22 +1,33 @@
 import { IProduct } from "../../types";
+import { IEvents } from "../base/Events";
 
 export class Cart {
     protected list: IProduct[] = [];
+    protected events?: IEvents;
+
+    constructor(events?: IEvents) {
+        this.events = events;
+    };
 
     getList(): IProduct[] {
         return this.list;
     };
     
     addItem(item: IProduct | null): void {
-        item !== null && this.list.push(item);
+        if (item !== null) {
+            this.list.push(item);
+            this.events?.emit('cart:change', {items: this.list, totalAmount: this.getTotalAmount()});
+        };
     };
     
     removeItem(id: string): void {
         this.list = this.list.filter(product => product.id !== id);
+        this.events?.emit('cart:change', {items: this.list, totalAmount: this.getTotalAmount()});
     };
     
     clearList(): void {
         this.list = [];
+        this.events?.emit('cart:change', {items: this.list, totalAmount: this.getTotalAmount()});
     };
     
     getTotalAmount(): number {
