@@ -6,7 +6,7 @@ interface ICardPreview extends ICard {
     category: string,
     image: string,
     description: string,
-    buttonEnabled: number | null,
+    buttonEnabled: boolean,
     buttonText: string
 };
 interface ICardPreviewActions {
@@ -46,8 +46,8 @@ export class CardPreview extends Card<ICardPreview> {
         this.textElement.textContent = value;
     };
 
-    set buttonEnabled(value: number | null) {
-        if (value === null) {
+    set buttonEnabled(value: boolean) {
+        if (value) {
             this.buttonElement.disabled = true;
         } else {
             this.buttonElement.disabled = false;

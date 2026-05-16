@@ -102,7 +102,7 @@ events.on('checkedProduct:change', (data: {item: IProduct}) => {
     if (cart.isExist(product.id)) text = 'Удалить из корзины'
     else text = 'Купить';
     if (product.price === null) text = 'Недоступно';
-    modal.content = cardPreview.render({...product, buttonEnabled: product.price, buttonText: text});
+    modal.content = cardPreview.render({...product, buttonEnabled: product.price === null, buttonText: text});
     modal.op();
 });
 events.on('cart:change', () => {
